@@ -5,6 +5,8 @@ defmodule Lou.Lua.Table do
   @callback install(Lua.t(), Path.t(), term()) :: Lua.t()
   @callback table(term()) :: Lua.table()
 
+  @type alloced :: {Lua.table(), Lua.t()}
+
   def fetch!(lua, table, key) do
     table = Lua.decode(lua, table)
 
@@ -44,6 +46,7 @@ defmodule Lou.Lua.Table do
   `key` is the key where the enumerable should be allocated to
   `data` is the data that will be passed to the `Table` implementation.
   """
+  @spec alloc_map(alloced, module, (any -> any), any, any) :: alloced
   def alloc_map({table, lua}, module, key_mutator, key, data) do
     {sub_table, lua} = Lua.alloc_table(lua, [])
 
