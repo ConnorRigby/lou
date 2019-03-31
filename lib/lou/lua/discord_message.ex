@@ -23,6 +23,7 @@ defmodule Lou.Lua.DiscordMessage do
       {"channel_id", Snowflake.dump(message.channel_id)},
       {"content", message.content},
       {"timestamp", message.timestamp},
+      {"reply", {:erl_func, &reply/2}},
       {"create_reaction", {:erl_func, &create_reaction/2}},
       {"edit", {:erl_func, &edit/2}},
       {"delete", {:erl_func, &delete/2}}
@@ -45,5 +46,10 @@ defmodule Lou.Lua.DiscordMessage do
     channel_id = Table.fetch!(lua, this, "channel_id")
     message_id = Table.fetch!(lua, this, "id")
     Discord.delete_message([channel_id, message_id], lua)
+  end
+
+  def reply([{:tref, _} = this, content], lua) do
+    channel_id = Table.fetch!(lua, this, "channel_id")
+    Discord.create_message([channel_id, content], lua)
   end
 end
