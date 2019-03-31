@@ -1,20 +1,43 @@
 # Lou
 
-To start your Phoenix server:
+## API
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+```lua
+-- Send a message
+message, err = discord.create_message(message.channel_id, "I copy-pasted this from the internet!");
+if err then
+  print("error creating message: " .. err.message);
+end
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+-- Mention someone by using the `reply` method.
+message = updated:reply("lol owned");
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+-- Channel also has a `create_message` method.
+guild.channels[message.channel_id]:create_message("https://i.imgur.com/U5sYgEf.jpg");
 
-## Learn more
+-- Update a message
+updated = discord.edit_message(channel_id, "I copy-pasted a typo from the internet!"));
 
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+-- Or use the helper method
+updated:edit_message("typo fixed");
+
+-- Delete a message
+discord.delete(updated.channel_id, updated.id);
+
+-- Or use the Delete method
+updated:delete();
+
+-- Add reactions
+discord.create_reaction(message.channel_id, message.id, "🤖");
+
+-- Or use the create_reaction method
+message:create_reaction("🤖");
+
+-- Update the bot's status
+discord.update_status("dnd", "playing minecraft lol");
+
+-- Of course regular lua functions exist
+if string.match(message.content, "lua is cool") then
+  message:reply("Hey thanks!");
+end
+```

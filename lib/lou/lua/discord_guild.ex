@@ -24,40 +24,6 @@ defmodule Lou.Lua.DiscordGuild do
     |> Table.alloc_map(DiscordGuildRole, &Snowflake.dump/1, "roles", guild.roles)
     |> Table.alloc_map(DiscordGuildMember, &Snowflake.dump/1, "members", guild.members)
     |> Table.alloc_map(DiscordChannel, &Snowflake.dump/1, "channels", guild.channels)
-
-    # {guild_table, lua} = Lua.alloc_table(lua, table(guild))
-    # {roles_table, lua} = Lua.alloc_table(lua, [])
-    # {members_table, lua} = Lua.alloc_table(lua, [])
-    # {channels_table, lua} = Lua.alloc_table(lua, [])
-
-    # lua =
-    #   Enum.reduce(guild.roles, lua, fn
-    #     {id, %Role{} = role}, lua ->
-    #       {role_table, lua} = DiscordGuildRole.alloc(lua, role)
-    #       Lua.set_table_key(lua, roles_table, Snowflake.dump(id), role_table)
-    #   end)
-
-    # lua =
-    #   Enum.reduce(guild.members, lua, fn
-    #     {id, %Member{} = member}, lua ->
-    #       {member_table, lua} = DiscordGuildMember.alloc(lua, member)
-    #       Lua.set_table_key(lua, members_table, Snowflake.dump(id), member_table)
-    #   end)
-
-    # lua =
-    #   Enum.reduce(guild.channels, lua, fn
-    #     {id, %Channel{} = channel}, lua ->
-    #       {channel_table, lua} = DiscordChannel.alloc(lua, channel)
-    #       Lua.set_table_key(lua, channels_table, Snowflake.dump(id), channel_table)
-    #   end)
-
-    # lua = 
-    #   lua
-    #   |> Lua.set_table_key(guild_table, "roles", roles_table)
-    #   |> Lua.set_table_key(guild_table, "members", members_table)
-    #   |> Lua.set_table_key(guild_table, "channels", channels_table)
-
-    # {guild_table, lua}
   end
 
   @impl Table
