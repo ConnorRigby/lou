@@ -1,6 +1,60 @@
 # Lou
 
-## API
+A discord bot that is configured by lua snippits.
+
+# TODOs
+
+A number of things still need to be implemented before this can actually be
+deployed for real.
+
+## Storage of scripts
+
+Right now there is a phoenix app, but its just the basic scafolding. Scripts
+should be stored in a relational resource that can be used by other resources.
+
+For example one might have a script:
+
+```lua
+message:create_reaction("🤖");
+message:reply("Thanks for your participation in this year's survey");
+```
+
+and it could be called on different events such as messages in a particular 
+channel, or messages from a particular user.
+
+## Registration of scripts
+
+Related to the above TODO. Once a script is stored, it needs to be assosiated
+with an event of some sort.
+
+the list of scriptable events isn't fully fleshed out yet, but i'm thinking
+at least:
+
+* `MESSAGE_CREATE`
+* `MESSAGE_UPDATE`
+* `MESSAGE_DELETE`
+* `MESSAGE_REACTION_ADD`
+* `MESSAGE_REACTION_DELETE`
+* `CHANNEL_CREATE`
+* `CHANNEL_DELETE`
+* `CHANNEL_UPDATE` ? i don't know if this is a real event.
+
+It might also be worth supporting the above events in particular conditions
+such as `MESSAGE_CREATE` when a particular `user` in a `guild` posts.
+
+## State updates
+
+It would be nice for scripts to be stateful. Potential ideas for this is allowing
+a script to return a Table that is merged with the `_G` table. 
+
+# API
+
+Here are some examples of the Lua API. There are some "magic" (read `global`)
+variables exported before execution. These include:
+
+* `guild` - a `guild` object of the current server.
+* `user` - a `user` object of the bot user.
+* `message` a `message` object of the message that caused the script to run.
 
 ```lua
 -- Send a message
