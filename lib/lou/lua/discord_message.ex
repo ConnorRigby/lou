@@ -8,6 +8,7 @@ defmodule Lou.Lua.DiscordMessage do
     lua
     |> Table.alloc(table(message))
     |> Table.alloc_embed(DiscordUser, "author", message.author)
+    |> Table.alloc_array(DiscordUser, "mentions", message.mentions)
     |> Table.alloc_embed(DiscordGuildMember, "member", message.member)
   end
 

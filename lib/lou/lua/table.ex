@@ -61,6 +61,29 @@ defmodule Lou.Lua.Table do
     {table, lua}
   end
 
+  def alloc_array({table, lua}, module, key, data) do
+    {sub_table, lua} = Lua.alloc_table(lua, [])
+
+    {lua, size} =
+      Enum.reduce(data, {lua, 0}, fn
+        sub_sub_data, {lua, indx} ->
+          {sub_sub_table, lua} = module.alloc(lua, sub_sub_data)
+          lua = Lua.set_table_key(lua, sub_table, indx, sub_sub_table)
+          {lua, indx + 1}
+      end)
+
+    lua = Lua.set_table_key(lua, sub_table, "n", size)
+
+    lua = Lua.set_table_key(lua, table, key, sub_table)
+    {table, lua}
+  end
+
+  def alloc_userdata({table, lua}, key, data) do
+    {userdata, lua} = :luerl_emul.alloc_userdata(data, lua)
+    lua = Lua.set_table_key(lua, table, key, userdata)
+    {table, lua}
+  end
+
   def install(lua, module, path, data) do
     {table, lua} = module.alloc(lua, data)
     Lua.set_table_keys(lua, path, table)

@@ -2,7 +2,7 @@ defmodule Lou.Lua.Discord do
   @moduledoc """
   Responsible for exposing Discord API functions to Lua
   """
-  alias Lou.{Lua, Lua.DiscordMessage, Lua.DiscordApiError}
+  alias Lou.{Lua, Lua.Table, Lua.DiscordMessage, Lua.DiscordApiError, Lua.DiscordEmbed}
   @behaviour Lua.Module
 
   alias Nostrum.{Api, Snowflake}
@@ -18,8 +18,23 @@ defmodule Lou.Lua.Discord do
       {"create_reaction", {:erl_func, &create_reaction/2}},
       {"edit_message", {:erl_func, &edit_message/2}},
       {"delete_message", {:erl_func, &delete_message/2}},
-      {"update_status", {:erl_func, &update_status/2}}
+      {"update_status", {:erl_func, &update_status/2}},
+      {"new_embed", {:erl_func, &new_embed/2}}
     ]
+  end
+
+  def create_message([channel_id, {:tref, _} = table], lua) do
+    "Elixir.Lou.Lua.DiscordEmbed" = Table.fetch!(lua, table, "__struct__")
+    {:userdata, embed} = Table.fetch!(lua, table, "_embed")
+    IO.puts("here")
+
+    with {:ok, channel_id} <- Snowflake.cast(channel_id),
+         {:ok, message} <- Api.create_message(channel_id, embed: embed) do
+      {table, lua} = DiscordMessage.alloc(lua, message)
+      {[table, nil], lua}
+    else
+      error -> handle_http_error(error, :create_message, lua)
+    end
   end
 
   def create_message([channel_id, content], lua) when is_binary(content) do
@@ -87,5 +102,10 @@ defmodule Lou.Lua.Discord do
     Logger.error("[#{function_name}] HTTP error: #{inspect(error)}")
     {error, lua} = DiscordApiError.alloc(lua, error)
     {[nil, error], lua}
+  end
+
+  def new_embed(_, lua) do
+    {table, lua} = DiscordEmbed.alloc(lua, %Nostrum.Struct.Embed{})
+    {[table], lua}
   end
 end
